@@ -480,10 +480,19 @@ const controlRecipe = async function() {
         _recipeViewJsDefault.default.renderError(`${err}`);
     }
 };
+const controlSearchResults = async function() {
+    try {
+        await _modelJs.loadSearchResults('pizza');
+        console.log(_modelJs.state.search.results);
+    } catch (err) {
+        console.log(err);
+    }
+};
 const init = function() {
     _recipeViewJsDefault.default.addHandlerRender(controlRecipe);
 };
 init();
+controlSearchResults();
 
 },{"url:../img/icons.svg":"iwCpK","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","core-js/stable":"eIyVg","regenerator-runtime/runtime":"cH8Iq","./model.js":"6Yfb5","./views/recipeView.js":"9q0mt"}],"iwCpK":[function(require,module,exports) {
 module.exports = require('./helpers/bundle-url').getBundleURL('8LZRF') + "icons.c097e590.svg";
@@ -16417,16 +16426,22 @@ parcelHelpers.export(exports, "state", ()=>state
 );
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 );
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults
+);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _configJs = require("./config.js");
 var _helpersJs = require("./helpers.js");
 const state = {
     recipe: {
+    },
+    search: {
+        query: '',
+        results: []
     }
 };
 const loadRecipe = async function(id) {
     try {
-        const data = await _helpersJs.getJSON(`${_configJs.API_URL}/${id}`);
+        const data = await _helpersJs.getJSON(`${_configJs.API_URL}${id}`);
         const { recipe  } = data.data;
         state.recipe = {
             cookingTime: recipe.cooking_time,
@@ -16439,6 +16454,23 @@ const loadRecipe = async function(id) {
             ingredients: recipe.ingredients
         };
         console.log(state.recipe);
+    } catch (err) {
+        console.error(`${err}`);
+        throw err;
+    }
+};
+const loadSearchResults = async function(query) {
+    try {
+        state.search.query = query;
+        const data = await _helpersJs.getJSON(`${_configJs.API_URL}?search=${query}`);
+        state.search.results = data.data.recipes.map((rec)=>{
+            return {
+                id: rec.id,
+                image: rec.image_url,
+                publisher: rec.publisher,
+                title: rec.title
+            };
+        });
     } catch (err) {
         console.error(`${err}`);
         throw err;
