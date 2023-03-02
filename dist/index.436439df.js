@@ -490,16 +490,20 @@ const controlSearchResults = async function() {
         if (!query) return;
         await _modelJs.loadSearchResults(query);
         _resultsViewJsDefault.default.renderSpinner();
-        _resultsViewJsDefault.default.render(_modelJs.getSearchResultsPage(3));
-        console.log(_modelJs.state.search.resultPerPage);
+        _resultsViewJsDefault.default.render(_modelJs.getSearchResultsPage(1));
         _paginationViewJsDefault.default.render(_modelJs.state.search);
     } catch (err) {
         console.log(err);
     }
 };
+const controlPagination = function(goToPage) {
+    _resultsViewJsDefault.default.render(_modelJs.getSearchResultsPage(goToPage));
+    _paginationViewJsDefault.default.render(_modelJs.state.search);
+};
 const init = function() {
     _recipeViewJsDefault.default.addHandlerRender(controlRecipe);
     _searchViewJsDefault.default.addHandlerSearch(controlSearchResults);
+    _paginationViewJsDefault.default.addHandlerClick(controlPagination);
 };
 init();
 
@@ -16901,14 +16905,23 @@ var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class PaginationView extends _viewDefault.default {
     _parentElement = document.querySelector('.pagination');
+    addHandlerClick(handler) {
+        this._parentElement.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn--inline');
+            if (!btn) return;
+            const goToPage = +btn.dataset.goto;
+            console.log(goToPage);
+            handler(goToPage);
+        });
+    }
     _generateMarkup() {
         const numPages = Math.ceil(this._data.results.length / this._data.resultPerPage);
         // Page 1, and there are other page
-        if (this._data.page === 1 && numPages > 1) return ` \n    <button class="btn--inline pagination__btn--next">\n      <span>Page ${this._data.page + 1}</span>\n      <svg class="search__icon">\n        <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>\n      </svg>\n    </button>`;
+        if (this._data.page === 1 && numPages > 1) return ` \n    <button data-goto="${this._data.page + 1}" class="btn--inline pagination__btn--next">\n      <span>Page ${this._data.page + 1}</span>\n      <svg class="search__icon">\n        <use href="${_iconsSvgDefault.default}#icon-arrow-right"></use>\n      </svg>\n    </button>`;
         //Last page
-        if (this._data.page === numPages && numPages > 1) return ` <button class="btn--inline pagination__btn--prev">\n      <svg class="search__icon">\n        <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>\n      </svg>\n      <span>Page  ${this._data.page - 1}</span>\n    </button>`;
+        if (this._data.page === numPages && numPages > 1) return ` <button data-goto="${this._data.page - 1}" class="btn--inline pagination__btn--prev">\n      <svg class="search__icon">\n        <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>\n      </svg>\n      <span>Page  ${this._data.page - 1}</span>\n    </button>`;
         //Other page
-        if (this._data.page < numPages) return ` <button class="btn--inline pagination__btn--prev">\n      <svg class="search__icon">\n        <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>\n      </svg>\n      <span>Page ${this._data.page - 1}</span>\n    </button>\n    <button class="btn--inline pagination__btn--next">\n      <span>Page ${this._data.page + 1}</span>\n      <svg class="search__icon">\n        <use href="{icons}#icon-arrow-right"></use>\n      </svg>\n    </button>`;
+        if (this._data.page < numPages) return ` <button data-goto="${this._data.page - 1}" class="btn--inline pagination__btn--prev">\n      <svg class="search__icon">\n        <use href="${_iconsSvgDefault.default}#icon-arrow-left"></use>\n      </svg>\n      <span>Page ${this._data.page - 1}</span>\n    </button>\n    <button data-goto="${this._data.page + 1}" class="btn--inline pagination__btn--next">\n      <span>Page ${this._data.page + 1}</span>\n      <svg class="search__icon">\n        <use href="{icons}#icon-arrow-right"></use>\n      </svg>\n    </button>`;
         return '';
     }
 }
