@@ -5,13 +5,14 @@ import { Fraction } from 'fractional';
 class RecipeView extends View {
   _parentElement = document.querySelector('.recipe');
   _errorMessage = 'We could not find that recipe. Please try another one.';
+  _message = '';
   addHandlerUpdateServings(handler) {
     this._parentElement.addEventListener('click', function (e) {
       const btn = e.target.closest('.btn--tiny');
-      console.log(btn);
+      console.log('--', btn);
+      if (!btn) return;
       const updateTo = +btn.dataset.updateTo;
       console.log(updateTo);
-      if (!btn) return;
       if (updateTo > 0) handler(updateTo);
     });
   }
@@ -20,7 +21,7 @@ class RecipeView extends View {
     this._parentElement.addEventListener('click', function (e) {
       console.log(e.target);
       const btn = e.target.closest('.btn--bookmark');
-      console.log(btn);
+      console.log('---', btn);
       if (!btn) return;
       handler();
     });
@@ -74,7 +75,7 @@ class RecipeView extends View {
             </div>
           </div>
 
-          <div class="recipe_user-generated">
+          <div class="recipe__user-generated">
           </div>
 
           <button class="btn--round btn--bookmark">
