@@ -62,14 +62,13 @@ const controlServings = function (newServings) {
 const controlAddBookmark = function () {
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
   else model.deleteBookmark(model.state.recipe.id);
-  console.log(model.state.recipe);
   recipeView.update(model.state.recipe);
   bookmarksView.render(model.state.bookmarks);
 };
 
 const controlAddRecipe = async function (newRecipe) {
   try {
-    await model.uploadRecipe(newRecipe);
+    /*await model.uploadRecipe(newRecipe);*/
     console.log(model.state.recipe);
   } catch (err) {
     console.error(err);

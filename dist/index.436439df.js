@@ -514,14 +514,12 @@ const controlServings = function(newServings) {
 const controlAddBookmark = function() {
     if (!_modelJs.state.recipe.bookmarked) _modelJs.addBookmark(_modelJs.state.recipe);
     else _modelJs.deleteBookmark(_modelJs.state.recipe.id);
-    console.log(_modelJs.state.recipe);
     _recipeViewJsDefault.default.update(_modelJs.state.recipe);
     _bookmarksViewJsDefault.default.render(_modelJs.state.bookmarks);
 };
 const controlAddRecipe = async function(newRecipe) {
     try {
-        await _modelJs.uploadRecipe(newRecipe);
-        console.log(_modelJs.state.recipe);
+        /*await model.uploadRecipe(newRecipe);*/ console.log(_modelJs.state.recipe);
     } catch (err) {
         console.error(err);
         _addRecipeViewJsDefault.default.renderError(err.message);
@@ -17162,8 +17160,6 @@ class BookmarksView extends _viewJsDefault.default {
         window.addEventListener('load', handler);
     }
     _generateMarkup() {
-        console.log(this._data);
-        console.log('bookmark view');
         const htmlb = this._data.map((bookmark)=>_previewViewJsDefault.default.render(bookmark, false)
         ).join('');
         console.log(htmlb);
@@ -17184,8 +17180,7 @@ class PreviewView extends _viewJsDefault.default {
     _parentElement = '';
     _generateMarkup() {
         const id = window.location.hash.slice(1);
-        const html = `\n    <li class="preview">\n      <a class="preview__link ${this._data.id === id ? 'preview__link--active' : ''}" href="#${this._data.id}">\n        <figure class="preview__fig">\n          <img src="${this._data.image}" alt="${this._data.title}" />\n        </figure>\n        <div class="preview__data">\n          <h4 class="preview__title">${this._data.title}</h4>\n          <p class="preview__publisher">${this._data.publisher}</p>\n          <div class="preview__user-generated ${this._data.key ? '' : 'hidden'}">\n            <svg>\n            <use href="${_iconsSvgDefault.default}#icon-user"></use>\n            </svg>\n          </div>\n        </div>\n      </a>\n    </li>\n  `;
-        console.log(html);
+        const html = `\n    <li class="preview">\n      <a class="preview__link ${this._data.id === id ? 'preview__link--active' : ''}" href="#${this._data.id}">\n        <figure class="preview__fig">\n          <img src="${this._data.image}" alt="${this._data.title}" crossorigin/>\n        </figure>\n        <div class="preview__data">\n          <h4 class="preview__title">${this._data.title}</h4>\n          <p class="preview__publisher">${this._data.publisher}</p>\n          <div class="preview__user-generated ${this._data.key ? '' : 'hidden'}">\n            <svg>\n            <use href="${_iconsSvgDefault.default}#icon-user"></use>\n            </svg>\n          </div>\n        </div>\n      </a>\n    </li>\n  `;
         return html;
     }
 }
