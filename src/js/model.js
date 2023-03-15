@@ -92,7 +92,6 @@ export const deleteBookmark = function (id) {
 
 const init = function () {
   const storage = localStorage.getItem('bookmarks');
-  console.log(storage);
   if (storage) state.bookmarks = JSON.parse(storage);
 };
 
@@ -108,9 +107,7 @@ export const uploadRecipe = async function (newRecipe) {
     const ingredients = Object.entries(newRecipe)
       .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '')
       .map(ing => {
-        const [quantity, unit, description] = ing[1]
-          .replaceAll(' ', '')
-          .split(',');
+        const ingArr = ing[1].replaceAll(' ', '').split(',');
         if (ingArr.length !== 3)
           throw new Error(
             'Wrong ingredient format! Please use the correct format'
