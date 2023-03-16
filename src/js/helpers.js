@@ -27,9 +27,9 @@ export const sendJSON = async function (url, uploadData) {
       },
       body: JSON.stringify(uploadData),
     });
-    const content = await Promise.race([fetch(url), timeout(TIMEOUT_SEC)]);
-    const data = await content.json();
-    if (!content.ok) throw new Error(`${data.message}(${res.status})`);
+    const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
+    const data = await res.json();
+    if (!res.ok) throw new Error(`${data.message}(${res.status})`);
     return data;
   } catch (err) {
     throw err;

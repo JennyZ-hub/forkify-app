@@ -519,7 +519,9 @@ const controlAddBookmark = function() {
 };
 const controlAddRecipe = async function(newRecipe) {
     try {
-        /*await model.uploadRecipe(newRecipe);*/ console.log(_modelJs.state.recipe);
+        await _modelJs.uploadRecipe(newRecipe);
+        console.log(_modelJs.state.recipe);
+        _recipeViewJsDefault.default.render(_modelJs.state.recipe);
     } catch (err) {
         console.error(err);
         _addRecipeViewJsDefault.default.renderError(err.message);
@@ -16469,7 +16471,10 @@ const createRecipeObject = function(data) {
         servings: recipe.servings,
         title: recipe.title,
         sourceUrl: recipe.source_url,
-        ingredients: recipe.ingredients
+        ingredients: recipe.ingredients,
+        ...recipe.key && {
+            key: recipe.key
+        }
     };
 };
 const loadRecipe = async function(id) {
@@ -16520,7 +16525,6 @@ const addBookmark = function(recipe) {
     state.bookmarks.push(recipe);
     if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
     persistBookmarks();
-    console.log('add');
 };
 const deleteBookmark = function(id) {
     const index = state.bookmarks.findIndex((el)=>el.id === id
@@ -16528,7 +16532,6 @@ const deleteBookmark = function(id) {
     state.bookmarks.splice(index, 1);
     if (id === state.recipe.id) state.recipe.bookmarked = false;
     persistBookmarks();
-    console.log('delete');
 };
 const init = function() {
     const storage = localStorage.getItem('bookmarks');
@@ -16562,7 +16565,10 @@ const uploadRecipe = async function(newRecipe) {
             ingredients
         };
         const data = await _helpersJs.sendJSON(`${_configJs.API_URL}?search=pizza&key=${_configJs.KEY}`, recipe);
+        console.log('post', data);
         state.recipe = createRecipeObject(data);
+        console.log(state.recipe);
+        addBookmark(state.recipe);
     } catch (err) {
         throw err;
     }
@@ -16621,12 +16627,12 @@ const sendJSON = async function(url, uploadData) {
             },
             body: JSON.stringify(uploadData)
         });
-        const content = await Promise.race([
-            fetch(url),
+        const res = await Promise.race([
+            fetchPro,
             timeout(_config.TIMEOUT_SEC)
         ]);
-        const data = await content.json();
-        if (!content.ok) throw new Error(`${data.message}(${res.status})`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(`${data.message}(${res.status})`);
         return data;
     } catch (err) {
         throw err;
@@ -17042,7 +17048,6 @@ class SearchView {
         this.#parentEl.addEventListener('submit', function(e) {
             e.preventDefault();
             handler();
-            console.log('search success');
         });
     }
 }
@@ -17059,7 +17064,6 @@ class ResultsView extends _viewJsDefault.default {
     _parentElement = document.querySelector('.results');
     _errorMessage = 'No recipe found for your query!Please try again';
     _generateMarkup() {
-        console.log(this._data);
         return this._data.map(this._generateMarkupPreview).join('');
     }
     _generateMarkupPreview(el) {
@@ -17135,6 +17139,7 @@ class AddRecipeView extends _viewJsDefault.default {
                 ...new FormData(this)
             ];
             const data = Object.fromEntries(dataArr);
+            console.log(data);
             handler(data);
         });
     }
@@ -17162,7 +17167,6 @@ class BookmarksView extends _viewJsDefault.default {
     _generateMarkup() {
         const htmlb = this._data.map((bookmark)=>_previewViewJsDefault.default.render(bookmark, false)
         ).join('');
-        console.log(htmlb);
         return this._data.map((bookmark)=>_previewViewJsDefault.default.render(bookmark, false)
         ).join('');
     }

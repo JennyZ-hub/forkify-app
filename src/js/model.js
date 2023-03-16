@@ -24,6 +24,7 @@ const createRecipeObject = function (data) {
     title: recipe.title,
     sourceUrl: recipe.source_url,
     ingredients: recipe.ingredients,
+    ...(recipe.key && { key: recipe.key }),
   };
 };
 
@@ -79,7 +80,6 @@ export const addBookmark = function (recipe) {
   state.bookmarks.push(recipe);
   if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
   persistBookmarks();
-  console.log('add');
 };
 
 export const deleteBookmark = function (id) {
@@ -87,7 +87,6 @@ export const deleteBookmark = function (id) {
   state.bookmarks.splice(index, 1);
   if (id === state.recipe.id) state.recipe.bookmarked = false;
   persistBookmarks();
-  console.log('delete');
 };
 
 const init = function () {
@@ -125,8 +124,12 @@ export const uploadRecipe = async function (newRecipe) {
       servings: +newRecipe.servings,
       ingredients,
     };
+
     const data = await sendJSON(`${API_URL}?search=pizza&key=${KEY}`, recipe);
+    console.log('post', data);
     state.recipe = createRecipeObject(data);
+    console.log(state.recipe);
+    addBookmark(state.recipe);
   } catch (err) {
     throw err;
   }
