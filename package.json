@@ -16,11 +16,13 @@
   "devDependencies": {
     "@parcel/transformer-image": "^2.0.0-rc.0",
     "@parcel/transformer-sass": "^2.0.0-rc.0",
-    "parcel": "^2.0.0-rc.0"
+    "parcel": "^2.0.0-rc.0",
+    "sass": "^1.59.3"
   },
   "dependencies": {
-    "core-js": "^3.28.0",
+    "core-js": "^3.29.1",
     "fractional": "^1.0.0",
+    "img": "^3.0.3",
     "regenerator-runtime": "^0.13.11"
   }
 }
